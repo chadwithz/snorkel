@@ -2,10 +2,16 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { FacebookService } from './facebook.service';
 import { CreateFacebookDto } from './dto/create-facebook.dto';
 import { UpdateFacebookDto } from './dto/update-facebook.dto';
+import { CreateFacebookPostDto } from './dto/create-facebook-post/create-facebook-post.dto';
 
 @Controller('facebook')
 export class FacebookController {
-  constructor(private readonly facebookService: FacebookService) {}
+  constructor(private readonly facebookService: FacebookService) { }
+
+  @Post()
+  post(@Body() createFacebookPostDto: CreateFacebookPostDto) {
+    return this.facebookService.postStatus(createFacebookPostDto);
+  }
 
   @Post()
   create(@Body() createFacebookDto: CreateFacebookDto) {

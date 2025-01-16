@@ -1,1 +1,1 @@
-export class CreateFacebookDto {}
+export class CreateFacebookDto { }
