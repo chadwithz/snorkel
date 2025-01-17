@@ -7,6 +7,7 @@ import { DeleteFacebookStatusDto } from './dto/delete-facebook-post/delete-faceb
 import { ChangeFacebookProfilePicDto } from './dto/change-profile-pic/change-profile-pic.dto';
 import { FormDataRequest } from 'nestjs-form-data';
 import { UpdateFacebookStatusWithImageDto } from './dto/update-facebook-post-with-image/update-facebook-status-with-image.dto';
+import { UpdateFacebookStatusWithVideoDto } from './dto/update-facebook-status-with-video/update-facebook-status-with-video.dto';
 
 @Controller('facebook')
 export class FacebookController {
@@ -32,6 +33,12 @@ export class FacebookController {
   @FormDataRequest()
   updateStatusWithPics(@Body() updateFacebookStatusWithPicDto: UpdateFacebookStatusWithImageDto) {
     return this.facebookService.updateStatusWithImage(updateFacebookStatusWithPicDto);
+  }
+
+  @Post('post-with-vids')
+  @FormDataRequest()
+  updateStatusWithVids(@Body() updateFacebookStatusWithVideoDto: UpdateFacebookStatusWithVideoDto) {
+    return this.facebookService.updateStatusWithVideos(updateFacebookStatusWithVideoDto);
   }
 
   @Post()
