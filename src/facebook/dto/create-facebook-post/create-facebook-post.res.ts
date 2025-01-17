@@ -49,7 +49,7 @@ export class CreateFacebookPostResponseDto implements PostStatus {
   }
 }
 
-export class CreateFacebookResponseErrDto {
+export class CreateFacebookStatusResponseErrDto {
   status: number;
   data: any;
   isError: boolean;
