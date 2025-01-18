@@ -2,10 +2,21 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { TwitterService } from './twitter.service';
 import { CreateTwitterDto } from './dto/create-twitter.dto';
 import { UpdateTwitterDto } from './dto/update-twitter.dto';
+import { CreateTwitterPostDto } from './dto/create-twitter-post-dto/create-twitter-post-response.dto';
 
 @Controller('twitter')
 export class TwitterController {
-  constructor(private readonly twitterService: TwitterService) {}
+  constructor(private readonly twitterService: TwitterService) { }
+
+  @Post()
+  getDms(@Body() getDmsDto: GetDmsDto) {
+    return this.twitterService.getDms();
+  }
+
+  @Post()
+  post(@Body() createPostDto: CreateTwitterPostDto) {
+    return this.twitterService.createPost(createPostDto);
+  }
 
   @Post()
   create(@Body() createTwitterDto: CreateTwitterDto) {

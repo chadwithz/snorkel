@@ -1,6 +1,5 @@
-import { CookieMap } from 'cookiefile';
-import { PathLike } from 'node:fs';
-import axios from 'axios';
+import axios from "axios";
+import { getCookieFromFile } from "src/utils/cookies";
 
 interface DTSG {
   __ar: number;
@@ -9,12 +8,6 @@ interface DTSG {
     valid_for: number;
     expires: number;
   }
-}
-
-export function getCookieFromFile(path: PathLike = 'cookies') {
-  const raw = new CookieMap(path.toString());
-  const cookie = raw.toRequestHeader();
-  return cookie.replace(/Cookie: /, '');
 }
 
 export function getProfileID() {
@@ -36,3 +29,5 @@ export async function generateDTSG() {
   const json = JSON.parse(formatted) as DTSG;
   return json;
 }
+
+

@@ -6,7 +6,7 @@ import { writeFile } from "node:fs/promises";
 
 import { CreateFacebookDto } from './dto/create-facebook.dto';
 import { UpdateFacebookDto } from './dto/update-facebook.dto';
-import { generateDTSG, getCookieFromFile, getProfileID } from 'src/utils/cookie';
+import { getCookieFromFile } from 'src/utils/cookies';
 import { CreateFacebookPostDto, Visibility } from './dto/create-facebook-post/create-facebook-post.dto';
 import { CreateFacebookStatusResponseErrDto, PostStatus } from './dto/create-facebook-post/create-facebook-post.res';
 import { formatFilenameWithTimestamp } from 'src/utils/filename';
@@ -18,6 +18,7 @@ import { UpdateFacebookStatusWithImageDto } from './dto/update-facebook-post-wit
 import { UpdateFacebookStatusWithImageErrDto, UpdateFacebookStatusWithImageResponseDto } from './dto/update-facebook-post-with-image/update-facebook-status-with-image.res.dto';
 import { UpdateFacebookStatusWithVideoDto } from './dto/update-facebook-status-with-video/update-facebook-status-with-video.dto';
 import { UpdateFacebookStatusWithVideoErrResponseDto, UpdateFacebookStatusWithVideoResponseDto } from './dto/update-facebook-status-with-video/update-facebook-status-with-video-res.dto';
+import { generateDTSG, getProfileID } from './common/utils/cookies';
 
 @Injectable()
 export class FacebookService {
@@ -185,17 +186,17 @@ export class FacebookService {
 
   // TODO: handle multiple files
   async updateStatusWithImage(updateFacebookStatusWithImageDto: UpdateFacebookStatusWithImageDto) {
+    const { file, text, visibility } = updateFacebookStatusWithImageDto;
+
     const cookie = getCookieFromFile();
     const profileID = getProfileID();
     const uuidv4 = uuid();
-    const file = updateFacebookStatusWithImageDto.file;
-    const text = updateFacebookStatusWithImageDto.text;
-    const visibility = updateFacebookStatusWithImageDto.visibility;
 
     const DTSG = await generateDTSG();
     const DOC_ID = '8997492047006365';
     let photo_id = "";
 
+    // TODO: probably causes problem
     const variables = visibility === Visibility.FRIENDS ? `{"input":{"composer_entry_point":"inline_composer","composer_source_surface":"timeline","idempotence_token":"${uuidv4}_FEED","source":"WWW","attachments":[{"photo":{"id":"${photo_id}"}}],"audience":{"privacy":{"allow":[],"base_state":"FRIENDS","deny":[],"tag_expansion_state":"UNSPECIFIED"}},"message":{"ranges":[],"text":"${text}"},"with_tags_ids":[],"inline_activities":[],"text_format_preset_id":"0","publishing_flow":{"supported_flows":["ASYNC_SILENT","ASYNC_NOTIF","FALLBACK"]},"logging":{"composer_session_id":"4dc40028-8e2c-4308-b289-be4e28d5cb1d"},"navigation_data":{"attribution_id_v2":"ProfileCometTimelineListViewRoot.react,comet.profile.timeline.list,unexpected,1736962877651,990899,190055527696468,,;ProfileCometTimelineListViewRoot.react,comet.profile.timeline.list,via_cold_start,1736962794639,373314,190055527696468,,"},"tracking":[null],"event_share_metadata":{"surface":"newsfeed"},"actor_id":"${profileID}","client_mutation_id":"2"},"feedLocation":"TIMELINE","feedbackSource":0,"focusCommentID":null,"gridMediaWidth":230,"groupID":null,"scale":1,"privacySelectorRenderLocation":"COMET_STREAM","checkPhotosToReelsUpsellEligibility":true,"renderLocation":"timeline","useDefaultActor":false,"inviteShortLinkKey":null,"isFeed":false,"isFundraiser":false,"isFunFactPost":false,"isGroup":false,"isEvent":false,"isTimeline":true,"isSocialLearning":false,"isPageNewsFeed":false,"isProfileReviews":false,"isWorkSharedDraft":false,"hashtag":null,"canUserManageOffers":false,"__relay_internal__pv__CometUFIShareActionMigrationrelayprovider":true,"__relay_internal__pv__GHLShouldChangeSponsoredDataFieldNamerelayprovider":true,"__relay_internal__pv__GHLShouldChangeAdIdFieldNamerelayprovider":false,"__relay_internal__pv__IsWorkUserrelayprovider":false,"__relay_internal__pv__CometUFIReactionsEnableShortNamerelayprovider":false,"__relay_internal__pv__CometFeedStoryDynamicResolutionPhotoAttachmentRenderer_experimentWidthrelayprovider":500,"__relay_internal__pv__CometImmersivePhotoCanUserDisable3DMotionrelayprovider":false,"__relay_internal__pv__IsMergQAPollsrelayprovider":false,"__relay_internal__pv__FBReelsMediaFooter_comet_enable_reels_ads_gkrelayprovider":false,"__relay_internal__pv__StoriesArmadilloReplyEnabledrelayprovider":true,"__relay_internal__pv__EventCometCardImage_prefetchEventImagerelayprovider":false,"__relay_internal__pv__GHLShouldChangeSponsoredAuctionDistanceFieldNamerelayprovider":false}` : `{"input":{"composer_entry_point":"inline_composer","composer_source_surface":"timeline","idempotence_token":"${uuidv4}_FEED","source":"WWW","attachments":[{"photo":{"id":"${photo_id}"}}],"audience":{"privacy":{"allow":[],"base_state":"EVERYONE","deny":[],"tag_expansion_state":"UNSPECIFIED"}},"message":{"ranges":[],"text":"${text}"},"with_tags_ids":null,"inline_activities":[],"text_format_preset_id":"0","publishing_flow":{"supported_flows":["ASYNC_SILENT","ASYNC_NOTIF","FALLBACK"]},"logging":{"composer_session_id":"c2f297ee-ab8d-4654-ae69-2473f738d0a4"},"navigation_data":{"attribution_id_v2":"ProfileCometTimelineListViewRoot.react,comet.profile.timeline.list,via_cold_start,1737007984884,23722,190055527696468,,"},"tracking":[null],"event_share_metadata":{"surface":"newsfeed"},"actor_id":"${profileID}","client_mutation_id":"1"},"feedLocation":"TIMELINE","feedbackSource":0,"focusCommentID":null,"gridMediaWidth":230,"groupID":null,"scale":1,"privacySelectorRenderLocation":"COMET_STREAM","checkPhotosToReelsUpsellEligibility":true,"renderLocation":"timeline","useDefaultActor":false,"inviteShortLinkKey":null,"isFeed":false,"isFundraiser":false,"isFunFactPost":false,"isGroup":false,"isEvent":false,"isTimeline":true,"isSocialLearning":false,"isPageNewsFeed":false,"isProfileReviews":false,"isWorkSharedDraft":false,"hashtag":null,"canUserManageOffers":false,"__relay_internal__pv__CometUFIShareActionMigrationrelayprovider":true,"__relay_internal__pv__GHLShouldChangeSponsoredDataFieldNamerelayprovider":true,"__relay_internal__pv__GHLShouldChangeAdIdFieldNamerelayprovider":false,"__relay_internal__pv__IsWorkUserrelayprovider":false,"__relay_internal__pv__CometUFIReactionsEnableShortNamerelayprovider":false,"__relay_internal__pv__CometFeedStoryDynamicResolutionPhotoAttachmentRenderer_experimentWidthrelayprovider":500,"__relay_internal__pv__CometImmersivePhotoCanUserDisable3DMotionrelayprovider":false,"__relay_internal__pv__IsMergQAPollsrelayprovider":false,"__relay_internal__pv__FBReelsMediaFooter_comet_enable_reels_ads_gkrelayprovider":false,"__relay_internal__pv__StoriesArmadilloReplyEnabledrelayprovider":true,"__relay_internal__pv__EventCometCardImage_prefetchEventImagerelayprovider":false,"__relay_internal__pv__GHLShouldChangeSponsoredAuctionDistanceFieldNamerelayprovider":false}`;
 
     const form = new FormData();
@@ -205,7 +206,7 @@ export class FacebookService {
     form.append('upload_id', 'jsc_c_1');
     form.append('farr', file);
 
-    const first_step = await axios.post<UpdateFacebookStatusWithImageErrDto, { data: string }>(
+    const step_one = await axios.post<UpdateFacebookStatusWithImageErrDto, { data: string }>(
       'https://upload.facebook.com/ajax/react_composer/attachments/photo/upload',
       form,
       {
@@ -224,14 +225,14 @@ export class FacebookService {
       }
     });
 
-    if (first_step instanceof UpdateFacebookStatusWithImageErrDto) {
-      return first_step.data;
+    if (step_one instanceof UpdateFacebookStatusWithImageErrDto) {
+      return step_one.data;
     }
 
-    const res = new UpdateFacebookStatusWithImageResponseDto(first_step.data);
+    const res = new UpdateFacebookStatusWithImageResponseDto(step_one.data);
     photo_id = res.payload.photoID;
 
-    const second_step = await axios.post(
+    const step_two = await axios.post(
       'https://www.facebook.com/api/graphql/',
       new URLSearchParams({
         '__a': '1',
@@ -250,14 +251,15 @@ export class FacebookService {
       }
     })
 
-    if (second_step instanceof UpdateFacebookStatusWithImageErrDto) {
-      return second_step.data;
+    if (step_two instanceof UpdateFacebookStatusWithImageErrDto) {
+      return step_two.data;
     }
 
-    await writeFile(`facebook-update-status-with-pic-${formatFilenameWithTimestamp('json')}`, JSON.stringify(second_step.data));
+    await writeFile(`facebook-update-status-with-pic-${formatFilenameWithTimestamp('json')}`, JSON.stringify(step_two.data));
     return "Success uploading photo";
   }
 
+  // TODO: handle multiple files
   async updateStatusWithVideos(updateFacebookStatusWithVideoDto: UpdateFacebookStatusWithVideoDto) {
     const file = updateFacebookStatusWithVideoDto.file;
     const text = updateFacebookStatusWithVideoDto.text;

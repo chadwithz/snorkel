@@ -24,6 +24,11 @@ def change_profile_pic(pic, cookies):
     return account.update_profile_image(pic)
 
 
+def get_dms(cookies):
+    account = Account(cookies=cookies)
+    return account.dm_history()
+
+
 # Dispatcher to call functions dynamically
 def dispatch_function(data):
     function_name = data.get("function")
@@ -37,6 +42,8 @@ def dispatch_function(data):
         return delete_post(**args)
     elif function_name == "change_profile_pic":
         return change_profile_pic(**args)
+    elif function_name == "get_dms":
+        return get_dms(**args)
     else:
         raise ValueError(f"Unknown function: {function_name}")
 
