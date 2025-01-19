@@ -1,6 +1,46 @@
+import { MemoryStoredFile } from "nestjs-form-data";
 import { spawn } from "node:child_process";
 
-export function callPythonFunction(filePath: string, functionName: string, args: Record<string, any>): Promise<any> {
+interface PythonFunctions {
+  post_text: {
+    args: {
+      content: string;
+      cookies: string;
+    },
+    result: any;
+  };
+  post_media: {
+    args: {
+      content: string;
+      media: MemoryStoredFile;
+      cookies: string;
+    },
+    result: any;
+  };
+  delete_post: {
+    args: {
+      id: string;
+      cookies: string
+    },
+    result: any;
+  };
+  change_profile_pic: {
+    args: {
+      pic: MemoryStoredFile;
+      cookies: string;
+    },
+    result: any;
+  };
+  get_dms: {
+    args: {
+      cookies: string;
+    },
+    result: any;
+  }
+}
+
+export function callPythonFunction<FuncName extends keyof PythonFunctions>(filePath: string, functionName: FuncName,
+  args: PythonFunctions[FuncName]['args']): Promise<PythonFunctions[FuncName]['result']> {
   return new Promise((resolve, reject) => {
     const pythonProcess = spawn('python3', [filePath]);
 
