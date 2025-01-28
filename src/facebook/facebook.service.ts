@@ -261,6 +261,9 @@ export class FacebookService {
   }
 
   // TODO: handle multiple files
+  //
+  // WARNING: doesn't work
+  // need to check: what makes facebook not accept the video
   async updateStatusWithVideos(updateFacebookStatusWithVideoDto: UpdateFacebookStatusWithVideoDto) {
     const file = updateFacebookStatusWithVideoDto.file;
     const text = updateFacebookStatusWithVideoDto.text;
@@ -309,24 +312,24 @@ export class FacebookService {
     const media_id = res.payload.video_id;
 
     const step_two = await axios.post<UpdateFacebookStatusWithVideoErrResponseDto, { data: string; }>(
-      `https://rupload-cgk1-2.up.facebook.com/fb_video/f80ced12e601b87b5fdb908d8ce69313-0-${file.size}`, file,
+      `https://rupload-cgk1-2.up.facebook.com/fb_video/f80ced12e601b87b5fdb908d8ce69313-0-${file.size}`, file.buffer,
       {
         params: {
           '__a': '1',
           'fb_dtsg': DTSG.payload.token
         },
         headers: {
-          'x-entity-name': file.originalName,
-          'x-entity-type': file.mimetype,
-          'x-entity-length': file.size,
+          'x-entity-name': `${file.originalName}`,
+          'x-entity-type': `${file.mimetype}`,
+          'x-entity-length': `${file.size}`,
           'offset': '0',
           'start_offset': '0',
-          'end_offset': file.size,
+          'end_offset': `${file.size}`,
           'id': 'undefined',
-          'product_media_id': media_id,
-          'x-total-asset-size': file.size,
+          'product_media_id': `${media_id}`,
+          'x-total-asset-size': `${file.size}`,
           'cookie': cookie,
-          'Content-Type': file.mimetype
+          'Content-Type': `${file.mimetype}`
         }
       }
     ).catch((error) => {
